@@ -1,30 +1,67 @@
 import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from './assets/vite.svg'
+import heroImg from './assets/hero.png'
+import './App.css'
 
 export default function App() {
-  const [form, setForm] = useState({ "title": "", "price": "", "isbn": "", })
-
+  const [form, setForm] = useState({
+    "title": "",
+    "price": "",
+    "isbn": "",
+  })
   const handleFormChange = (e) => {
     const { name, value } = e.target
-    console.log(name, value)
     setForm({ ...form, [name]: value })
   }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    console.log(form);
+
+    //fastapi 호출 : http://127.0.0.1:8000/book => POST
+    const response = await fetch(
+      "/api/book",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
+      }
+    )
+
+    const result = await response.json()
+
+    console.log(result)
+  }
+
 
   return (
     <>
       <h2>도서 관리 프로그램</h2>
-      <form>
+      <form onSubmit={handleSubmit}>
         <ul>
           <li>
             <label>제목</label>
-            <input type="text" name='title' onChange={handleFormChange}></input>
+            <input type="text"
+              name='title'
+              value={form.title}
+              onChange={handleFormChange}></input>
           </li>
           <li>
             <label>가격</label>
-            <input type="text" name='price'></input>
+            <input type="text"
+              name='price'
+              value={form.price}
+              onChange={handleFormChange}></input>
           </li>
           <li>
             <label>ISBN</label>
-            <input type="text" name='isbn'></input>
+            <input type="text"
+              name='isbn'
+              value={form.isbn}
+              onChange={handleFormChange}></input>
           </li>
           <li>
             <button type="submit">등록</button>
@@ -34,3 +71,4 @@ export default function App() {
     </>
   )
 }
+
